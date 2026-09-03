@@ -65,3 +65,31 @@ sebelum hajb) — ibu 1/3 baki.
 ### D-011 · Money guna BigInt sen; `Fraction.toDouble()` untuk paparan sahaja
 Tiada `double` dalam laluan pengiraan. Agihan wang guna kaedah baki sen supaya
 jumlah agihan = harta bersih tepat ke sen.
+
+---
+
+## 2026-09-03 — Fasa 2
+
+### D-012 · Drift/SQLite ditangguh ke lapisan app (Fasa 3)
+`family_graph` kekal PURE Dart tanpa `drift`/`build_runner`. Skema SQL penuh
+(SPEC 2.6) disimpan sebagai pemalar `familyGraphSchemaSql` dan graf dalam-memori
+menyokong `toJson`/`fromJson`. Lapisan Drift sebenar (yang perlukan runtime
+Flutter + `sqlite3` native untuk peranti) dibina dalam `app/lib/data/` pada
+Fasa 3 daripada skema yang sama. Snapshot immutable (SPEC 2.7) sudah berfungsi
+penuh sebagai JSON dalam `family_graph`.
+
+### D-013 · Nasab menapis di extractor, bukan resolver
+`RelationshipResolver` menerbitkan hubungan STRUKTUR (untuk pelabelan UI).
+`HeirExtractor` menggunakan pertalian `inherits` sahaja (nasab `confirmed` +
+`LinkKind.biological` + perkahwinan `married`). Anak angkat / anak tiri / nasab
+tidak sabit dimasukkan ke senarai `excluded` dengan sebab, bukan dibuang senyap.
+
+### D-014 · Kitaran graf DIHALANG di `FamilyGraph.addParentLink`
+Melempar `ArgumentError` (SPEC 2.9) kerana resolver akan berulang tanpa henti.
+Semua semakan lain (anak lebih tua daripada ibu bapa, lahir selepas kematian
+bapa, dua bapa berbeza, umur kahwin) hanya MEMBENDERA melalui `validateGraph`.
+
+### D-015 · Cucu melalui anak lelaki: satu peringkat dalam MVP
+`HeirExtractor` mengambil `sonsSon`/`sonsDaughter` daripada anak lelaki si mati
+(hidup atau mati). Peringkat lebih dalam (cicit) belum diproses — akan dibendera
+apabila diperlukan. Cukup untuk kes lazim (anak lelaki mati, cucu mewarisi).
