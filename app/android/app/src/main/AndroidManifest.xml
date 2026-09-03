@@ -1,6 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Minimum mutlak (SPEC 5.4). CAMERA & READ_MEDIA_IMAGES hanya untuk foto
+         avatar, diminta secara runtime bila digunakan. TIADA lokasi, kenalan,
+         telefon, SMS, atau storan penuh. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
     <application
-        android:label="waris_app"
+        android:label="WARIS"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

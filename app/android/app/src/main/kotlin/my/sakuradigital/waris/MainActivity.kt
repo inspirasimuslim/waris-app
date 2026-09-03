@@ -1,4 +1,4 @@
-package my.sakuradigital.waris_app
+package my.sakuradigital.waris
 
 import io.flutter.embedding.android.FlutterActivity
 

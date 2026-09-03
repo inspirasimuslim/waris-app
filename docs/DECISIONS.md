@@ -146,7 +146,38 @@ penuh. Menjamin immutability (SPEC 2.7) tanpa `FaraidResult.fromJson`.
 - ✅ Ujian e2e: bina keluarga → simulasi → angka padan FRD-106; kes luar skop dibendera
 - ⚠️ Donut chart keputusan belum (senarai kad sahaja)
 
-### Status DoD Fasa 3 (BELUM lengkap — perlu peranti sebenar & lelaran visual)
+---
+
+## 2026-09-03 — Fasa 5 (APK)
+
+### D-022 · Keystore UJIAN dijana; BUKAN untuk Play Store
+Atas persetujuan pemilik, `app/waris-release.jks` dijana (`keytool`, RSA 2048,
+alias `waris`, kata laluan `warisTest2026`) untuk menghasilkan APK boleh-pasang
+bagi ujian dalaman. `key.properties` + `.jks` dalam `.gitignore`. Sebelum
+keluaran awam, pemilik MESTI jana keystore rasmi dan sandarkan di dua lokasi
+(SPEC 5.2). `build.gradle.kts` guna signingConfig `release` bila `key.properties`
+wujud, jika tidak jatuh balik ke debug supaya `flutter run --release` berfungsi.
+
+### D-023 · applicationId & namespace = `my.sakuradigital.waris`
+Ditukar daripada `my.sakuradigital.waris_app` yang dijana `flutter create`
+(SPEC 5.1, jawapan pemilik: kekal nama WARIS). MainActivity dipindahkan ke
+pakej `my.sakuradigital.waris`.
+
+### D-024 · minSdk & targetSdk ikut lantai Flutter 3.47
+SPEC 5.1 menetapkan `minSdk 23` / `targetSdk 35`. Flutter 3.47 (+ AGP 9.1)
+menguatkuasakan lantai `minSdk`/`compileSdk`/`targetSdk` yang lebih tinggi;
+`build.gradle.kts` guna `flutter.minSdkVersion` / `flutter.targetSdkVersion`.
+Liputan peranti kekal >98%; penyulitan + biometrik disokong sepenuhnya.
+`isMinifyEnabled` + `isShrinkResources` + proguard-rules.pro dihidupkan (SPEC 5.3).
+
+### D-025 · Ikon & splash berjenama ditangguh
+`flutter_launcher_icons` / `flutter_native_splash` (SPEC 5.6) memerlukan fail
+seni ikon 1024×1024 yang belum wujud. APK pertama guna ikon Flutter lalai.
+Tindakan: pemilik sediakan seni ikon; kemudian jana untuk semua ketumpatan.
+
+---
+
+## Status DoD Fasa 3 (BELUM lengkap — perlu peranti sebenar & lelaran visual)
 - ✅ Data kekal selepas app ditutup (JSON)
 - ✅ Aliran Tap → Connect → bottom sheet → tambah orang + cadangan pintar
 - ✅ 5 ujian widget (mula, bottom sheet, tambah orang, kad profil, cadangan)
