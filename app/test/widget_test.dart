@@ -71,6 +71,74 @@ void main() {
     }
   });
 
+  testWidgets(
+      'REGRESI: pilih jenis hubungan tidak meranapkan app (borang di tempat)',
+      (tester) async {
+    final repo = await _repo();
+    await repo.addPerson(name: 'Ahmad', gender: Gender.male, isSelf: true);
+    await tester.pumpWidget(_harness(repo));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('fab_connect')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('rel_spouse')));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull); // dulu: Null check on MediaQuery
+    expect(find.byKey(const ValueKey('field_name')), findsOneWidget);
+
+    // Butang kembali pulang ke senarai hubungan tanpa ranap.
+    await tester.tap(find.byKey(const ValueKey('btn_add_person_back')));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Hubungkan seseorang'), findsOneWidget);
+  });
+
+  testWidgets(
+      'REGRESI: "Hubungkan" dari kad profil tidak meranapkan (context selepas pop)',
+      (tester) async {
+    final repo = await _repo();
+    final me =
+        await repo.addPerson(name: 'Ahmad', gender: Gender.male, isSelf: true);
+    final dad = await repo.addPerson(name: 'Abdullah', gender: Gender.male);
+    await repo.connect(
+        anchorId: me.id, otherId: dad.id, relation: DirectRelation.father);
+    await tester.pumpWidget(_harness(repo));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Abdullah').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('btn_profile_connect')));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('Hubungkan seseorang'), findsOneWidget);
+  });
+
+  testWidgets(
+      'REGRESI: "Simulasi kematian" dari kad profil membuka aliran tanpa ranap',
+      (tester) async {
+    final repo = await _repo();
+    final me =
+        await repo.addPerson(name: 'Ahmad', gender: Gender.male, isSelf: true);
+    final w = await repo.addPerson(name: 'Aisyah', gender: Gender.female);
+    await repo.connect(
+        anchorId: me.id, otherId: w.id, relation: DirectRelation.spouse);
+    await tester.pumpWidget(_harness(repo));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Ahmad').first);
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const ValueKey('btn_simulate_death')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('btn_simulate_death')),
+        warnIfMissed: false);
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.byKey(const ValueKey('btn_sim_continue')), findsOneWidget);
+  });
+
   testWidgets('tambah orang: Bapa -> isi nama -> nod baharu muncul',
       (tester) async {
     final repo = await _repo();

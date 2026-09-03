@@ -58,8 +58,11 @@ class _ProfileCard extends ConsumerWidget {
             FilledButton.icon(
               key: const ValueKey('btn_profile_connect'),
               onPressed: () {
-                Navigator.of(context).pop();
-                showConnectSheet(context, ref, person.id);
+                // Tangkap navigator SEBELUM pop; `context` kad profil mati
+                // selepas pop (punca ranap sebelum ini).
+                final navigator = Navigator.of(context);
+                navigator.pop();
+                showConnectSheet(navigator.context, ref, person.id);
               },
               icon: const Icon(Icons.add),
               label: const Text('Hubungkan'),
@@ -78,8 +81,9 @@ class _ProfileCard extends ConsumerWidget {
             OutlinedButton.icon(
               key: const ValueKey('btn_simulate_death'),
               onPressed: () {
-                Navigator.of(context).pop();
-                openSimulation(context, ref, person);
+                final navigator = Navigator.of(context);
+                navigator.pop();
+                openSimulation(navigator.context, ref, person);
               },
               icon: const Icon(Icons.balance),
               label: const Text('Simulasi kematian'),
