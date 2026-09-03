@@ -170,6 +170,16 @@ menguatkuasakan lantai `minSdk`/`compileSdk`/`targetSdk` yang lebih tinggi;
 Liputan peranti kekal >98%; penyulitan + biometrik disokong sepenuhnya.
 `isMinifyEnabled` + `isShrinkResources` + proguard-rules.pro dihidupkan (SPEC 5.3).
 
+### D-026 · Bottom sheet dua-peringkat mesti dalam SATU sheet
+Ranap dilaporkan pada peranti (`flutter run --release`): pilih jenis hubungan →
+`Null check operator used on a null value` di `MediaQuery.of` dalam
+`_showAddPerson`. Punca: `showModalBottomSheet` bersarang dipanggil dengan
+`context` daripada sheet yang sudah di-`pop`. Peraturan seterusnya: JANGAN
+pop satu sheet kemudian buka sheet baharu dengan `context` yang sama; sama ada
+tukar kandungan dalam satu sheet (dilakukan untuk connect_sheet), atau tangkap
+`Navigator` sebelum `pop` dan guna `navigator.context` (dilakukan untuk
+profile_card). Ujian regresi dalam `widget_test.dart` guna `tester.takeException()`.
+
 ### D-025 · Ikon & splash berjenama ditangguh
 `flutter_launcher_icons` / `flutter_native_splash` (SPEC 5.6) memerlukan fail
 seni ikon 1024×1024 yang belum wujud. APK pertama guna ikon Flutter lalai.
