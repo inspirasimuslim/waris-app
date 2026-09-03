@@ -64,6 +64,8 @@ class SimulationSnapshot {
 
   FamilyGraph get graph => FamilyGraph.fromJson(graphJson);
 
+  Money? get netEstate => result.netEstate;
+
   Map<String, Object?> toJson() => {
         'id': id,
         'familyId': familyId,
@@ -71,8 +73,33 @@ class SimulationSnapshot {
         'simulationDate': simulationDate.toIso8601String(),
         'createdAt': createdAt.toIso8601String(),
         'rulesetVersion': result.rulesetVersion,
+        'netEstateCents': result.netEstate?.cents.toString(),
         'snapshotJson': jsonEncode(graphJson),
         'resultJson': jsonEncode(result.toJson()),
         'notes': notes,
       };
+
+  /// Bina semula daripada bentuk yang disimpan. Kerana graf beku + tarikh
+  /// simulasi tidak berubah, menjalankan semula enjin menghasilkan keputusan
+  /// yang SAMA (deterministik) — snapshot kekal immutable (SPEC 2.7).
+  factory SimulationSnapshot.fromJson(
+    Map<String, Object?> j, {
+    FaraidEngine engine = const FaraidEngine(),
+  }) {
+    final graphJson =
+        jsonDecode(j['snapshotJson']! as String) as Map<String, Object?>;
+    final graph = FamilyGraph.fromJson(graphJson);
+    final centsStr = j['netEstateCents'] as String?;
+    final rebuilt = SimulationSnapshot.run(
+      id: j['id']! as String,
+      graph: graph,
+      deceasedId: j['deceasedId']! as String,
+      simulationDate: DateTime.parse(j['simulationDate']! as String),
+      createdAt: DateTime.parse(j['createdAt']! as String),
+      netEstate:
+          centsStr == null ? null : Money.fromCents(BigInt.parse(centsStr)),
+      engine: engine,
+    );
+    return rebuilt;
+  }
 }

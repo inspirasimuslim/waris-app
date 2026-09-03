@@ -31,3 +31,9 @@ final selfPersonProvider = Provider<Person?>((ref) {
 
 /// Cadangan langkah seterusnya selepas penambahan (SPEC 3.6).
 final smartSuggestionProvider = StateProvider<String?>((ref) => null);
+
+/// Sejarah simulasi kematian (SPEC 4.6).
+final simulationsProvider = StreamProvider((ref) {
+  final repo = ref.watch(familyRepositoryProvider);
+  return repo.watchSimulations();
+});

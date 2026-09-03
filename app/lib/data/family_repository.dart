@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:faraid_engine/faraid_engine.dart';
 import 'package:family_graph/family_graph.dart';
 import 'package:uuid/uuid.dart';
 
@@ -37,6 +38,19 @@ abstract class FamilyRepository {
   });
 
   Future<void> save();
+
+  /// Sejarah simulasi kematian (SPEC 4.6), terbaharu dahulu. Setiap satu ialah
+  /// snapshot beku (SPEC 2.7).
+  List<SimulationSnapshot> get simulations;
+
+  Stream<List<SimulationSnapshot>> watchSimulations();
+
+  /// Cipta snapshot immutable, jalankan enjin, simpan ke sejarah.
+  Future<SimulationSnapshot> runSimulation({
+    required String deceasedId,
+    required DateTime simulationDate,
+    Money? netEstate,
+  });
 }
 
 enum DirectRelation { spouse, father, mother, son, daughter, siblingFull }
@@ -55,9 +69,47 @@ class InMemoryFamilyRepository implements FamilyRepository {
   final _uuid = const Uuid();
   late FamilyGraph _graph = FamilyGraph(familyId: familyId);
   final _listeners = <MultiStreamController<FamilyGraph>>{};
+  final _sims = <SimulationSnapshot>[];
+  final _simListeners = <MultiStreamController<List<SimulationSnapshot>>>{};
 
   @override
   FamilyGraph get graph => _graph;
+
+  @override
+  List<SimulationSnapshot> get simulations => List.unmodifiable(_sims);
+
+  @override
+  Stream<List<SimulationSnapshot>> watchSimulations() =>
+      Stream<List<SimulationSnapshot>>.multi((c) {
+        c.add(simulations);
+        _simListeners.add(c);
+        c.onCancel = () => _simListeners.remove(c);
+      });
+
+  void _emitSims() {
+    for (final l in _simListeners.toList()) {
+      l.add(simulations);
+    }
+  }
+
+  @override
+  Future<SimulationSnapshot> runSimulation({
+    required String deceasedId,
+    required DateTime simulationDate,
+    Money? netEstate,
+  }) async {
+    final snap = SimulationSnapshot.run(
+      id: _uuid.v4(),
+      graph: _graph,
+      deceasedId: deceasedId,
+      simulationDate: simulationDate,
+      netEstate: netEstate,
+    );
+    _sims.insert(0, snap);
+    _emitSims();
+    await save();
+    return snap;
+  }
 
   @override
   Stream<FamilyGraph> watch() => Stream<FamilyGraph>.multi((controller) {
@@ -85,9 +137,16 @@ class InMemoryFamilyRepository implements FamilyRepository {
     final f = file;
     if (f != null && await f.exists()) {
       final json = jsonDecode(await f.readAsString()) as Map<String, Object?>;
-      _graph = FamilyGraph.fromJson(json);
+      _graph = FamilyGraph.fromJson(
+          (json['graph'] as Map?)?.cast<String, Object?>() ?? json);
+      _sims
+        ..clear()
+        ..addAll(((json['simulations'] as List?) ?? const [])
+            .map((e) => SimulationSnapshot.fromJson(
+                (e as Map).cast<String, Object?>())));
     }
     _emit();
+    _emitSims();
   }
 
   @override
@@ -95,7 +154,10 @@ class InMemoryFamilyRepository implements FamilyRepository {
     final f = file;
     if (f == null) return;
     await f.parent.create(recursive: true);
-    await f.writeAsString(jsonEncode(_graph.toJson()));
+    await f.writeAsString(jsonEncode({
+      'graph': _graph.toJson(),
+      'simulations': _sims.map((s) => s.toJson()).toList(),
+    }));
   }
 
   @override

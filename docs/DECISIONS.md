@@ -120,6 +120,32 @@ menyahduplikasi `AsyncData` yang `==`.
 `lib/l10n/app_ms.arb` + `app_en.arb`, kelas `L`, BM lalai (SPEC 3.8). Banyak
 rentetan UI masih inline — akan dipindahkan ke ARB secara berperingkat.
 
+### D-020 · Fasa 4: aliran simulasi + "Kenapa?" templat tetap
+`SimulationFlow`: intro → skrin waris (dikenal pasti + tidak mewarisi + sebab)
+→ input harta (boleh dilangkau, aset kasar vs bersih, wasiat/hibah TIDAK
+ditolak automatik) → skrin keputusan (pecahan + jumlah + asal masalah + tashih).
+"Kenapa?" dijana daripada `reasonCode` trace melalui templat TETAP
+(`why_templates.dart`) — bukan AI (SPEC 4.5). Penafian SPEC 4.7 pada setiap
+skrin keputusan (`_DisclaimerFooter`). Kes `requiresManualReview` dipaparkan
+sebagai sepanduk amaran, angka tidak disembunyikan tetapi dilabel perlu semakan.
+
+### D-021 · Snapshot disimpan sebagai graf beku; keputusan dijana semula
+Fail JSON menyimpan `graph` + `simulations[]`. Setiap simulasi menyimpan graf
+beku penuh; `SimulationSnapshot.fromJson` menjalankan semula enjin ke atas graf
+beku itu (deterministik → keputusan sama) daripada menserialisasi `FaraidResult`
+penuh. Menjamin immutability (SPEC 2.7) tanpa `FaraidResult.fromJson`.
+
+### Status DoD Fasa 4
+- ✅ Simulasi hujung ke hujung dari kad profil
+- ✅ Snapshot immutable disimpan
+- ✅ Waris terdinding + sebab dipaparkan
+- ✅ Input harta berfungsi & boleh dilangkau
+- ✅ "Kenapa?" untuk semua reasonCode MVP (templat tetap)
+- ✅ Sejarah simulasi
+- ✅ Penafian pada setiap skrin keputusan
+- ✅ Ujian e2e: bina keluarga → simulasi → angka padan FRD-106; kes luar skop dibendera
+- ⚠️ Donut chart keputusan belum (senarai kad sahaja)
+
 ### Status DoD Fasa 3 (BELUM lengkap — perlu peranti sebenar & lelaran visual)
 - ✅ Data kekal selepas app ditutup (JSON)
 - ✅ Aliran Tap → Connect → bottom sheet → tambah orang + cadangan pintar

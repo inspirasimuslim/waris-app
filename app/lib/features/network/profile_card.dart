@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../state/providers.dart';
+import '../simulation/simulation_screen.dart';
 import 'connect_sheet.dart';
 
 /// Kad profil kontekstual (SPEC 3.5). Tindakan muncul berdasarkan siapa yang
@@ -73,14 +74,16 @@ class _ProfileCard extends ConsumerWidget {
               icon: const Icon(Icons.center_focus_strong),
               label: const Text('Fokus pada orang ini'),
             ),
-            if (deceased) ...[
-              const SizedBox(height: 8),
-              OutlinedButton.icon(
-                onPressed: null, // Fasa 4
-                icon: const Icon(Icons.balance),
-                label: const Text('Simulasi kematian (Fasa 4)'),
-              ),
-            ],
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              key: const ValueKey('btn_simulate_death'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                openSimulation(context, ref, person);
+              },
+              icon: const Icon(Icons.balance),
+              label: const Text('Simulasi kematian'),
+            ),
           ],
         ),
       ),

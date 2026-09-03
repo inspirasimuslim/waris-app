@@ -3,29 +3,42 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme.dart';
 
-/// Susun atur graf mengikut generasi (BFS dari orang fokus) dengan pasangan
+/// Susun atur graf mengikut generasi (BFS dari orang fokus), pasangan
 /// bersebelahan, dilukis oleh [CustomPainter] dalam [InteractiveViewer]
-/// (SPEC 3.3). Ringkas untuk MVP; penolakan berulang penuh menyusul.
+/// (SPEC 3.3). Mod Fokus: hadkan bilangan generasi kelihatan (SPEC 3.4).
 class FamilyGraphView extends StatelessWidget {
   const FamilyGraphView({
     super.key,
     required this.graph,
     required this.focusId,
     required this.onTapPerson,
+    this.generationsUp = 1,
+    this.generationsDown = 1,
+    this.showAll = false,
   });
 
   final FamilyGraph graph;
   final String focusId;
   final void Function(Person person) onTapPerson;
 
+  /// Berapa generasi ke atas / ke bawah orang fokus yang kelihatan (SPEC 3.4).
+  final int generationsUp;
+  final int generationsDown;
+  final bool showAll;
+
   @override
   Widget build(BuildContext context) {
-    final layout = _GraphLayout.compute(graph, focusId);
+    final layout = _GraphLayout.compute(
+      graph,
+      focusId,
+      up: showAll ? 999 : generationsUp,
+      down: showAll ? 999 : generationsDown,
+    );
     final size = layout.canvasSize;
     return InteractiveViewer(
       constrained: false,
-      boundaryMargin: const EdgeInsets.all(200),
-      minScale: 0.4,
+      boundaryMargin: const EdgeInsets.all(240),
+      minScale: 0.3,
       maxScale: 3,
       child: SizedBox(
         width: size.width,
@@ -37,6 +50,7 @@ class FamilyGraphView extends StatelessWidget {
               painter: _EdgePainter(
                 layout: layout,
                 color: Theme.of(context).colorScheme.outlineVariant,
+                spouseColor: Theme.of(context).colorScheme.primary,
               ),
             ),
             for (final node in layout.nodes.values)
@@ -60,8 +74,8 @@ class FamilyGraphView extends StatelessWidget {
 
 const _nodeW = 108.0;
 const _nodeH = 104.0;
-const _hGap = 28.0;
-const _vGap = 120.0;
+const _hGap = 24.0;
+const _vGap = 116.0;
 
 class _Node {
   _Node(this.person, this.generation);
@@ -71,12 +85,18 @@ class _Node {
 }
 
 class _GraphLayout {
-  _GraphLayout(this.nodes, this.canvasSize, this.edges);
+  _GraphLayout(this.nodes, this.canvasSize, this.parentEdges, this.spouseEdges);
   final Map<String, _Node> nodes;
   final Size canvasSize;
-  final List<(String, String)> edges; // (parentId, childId)
+  final List<(String, String)> parentEdges; // (parentId, childId)
+  final List<(String, String)> spouseEdges;
 
-  static _GraphLayout compute(FamilyGraph graph, String focusId) {
+  static _GraphLayout compute(
+    FamilyGraph graph,
+    String focusId, {
+    int up = 999,
+    int down = 999,
+  }) {
     final resolver = RelationshipResolver(graph);
     final gen = <String, int>{focusId: 0};
     final queue = <String>[focusId];
@@ -85,13 +105,13 @@ class _GraphLayout {
       final g = gen[id]!;
       for (final role in ParentRole.values) {
         final p = resolver.parentOf(id, role);
-        if (p != null && !gen.containsKey(p.id)) {
+        if (p != null && !gen.containsKey(p.id) && g - 1 >= -up) {
           gen[p.id] = g - 1;
           queue.add(p.id);
         }
       }
       for (final c in resolver.childrenOf(id)) {
-        if (!gen.containsKey(c.id)) {
+        if (!gen.containsKey(c.id) && g + 1 <= down) {
           gen[c.id] = g + 1;
           queue.add(c.id);
         }
@@ -108,6 +128,27 @@ class _GraphLayout {
     for (final e in gen.entries) {
       byGen.putIfAbsent(e.value, () => []).add(e.key);
     }
+    // Susun setiap baris supaya unit pasangan bersebelahan (SPEC 3.3 langkah 2).
+    for (final ids in byGen.values) {
+      ids.sort();
+      final ordered = <String>[];
+      final placed = <String>{};
+      for (final id in ids) {
+        if (placed.contains(id)) continue;
+        ordered.add(id);
+        placed.add(id);
+        for (final sp in resolver.currentSpouses(id)) {
+          if (ids.contains(sp.id) && !placed.contains(sp.id)) {
+            ordered.add(sp.id);
+            placed.add(sp.id);
+          }
+        }
+      }
+      ids
+        ..clear()
+        ..addAll(ordered);
+    }
+
     final gens = byGen.keys.toList()..sort();
     final nodes = <String, _Node>{};
     var maxRowWidth = 0.0;
@@ -115,43 +156,72 @@ class _GraphLayout {
       final ids = byGen[gens[row]]!;
       final rowWidth = ids.length * (_nodeW + _hGap);
       maxRowWidth = rowWidth > maxRowWidth ? rowWidth : maxRowWidth;
+    }
+    for (var row = 0; row < gens.length; row++) {
+      final ids = byGen[gens[row]]!;
+      final rowWidth = ids.length * (_nodeW + _hGap);
+      final startX = (maxRowWidth - rowWidth) / 2 + 40;
       for (var i = 0; i < ids.length; i++) {
         final node = _Node(graph.requirePerson(ids[i]), gens[row]);
         node.center = Offset(
-          i * (_nodeW + _hGap) + _nodeW / 2 + 40,
+          startX + i * (_nodeW + _hGap) + _nodeW / 2,
           row * (_nodeH + _vGap) + _nodeH / 2 + 40,
         );
         nodes[ids[i]] = node;
       }
     }
 
-    final edges = <(String, String)>[];
+    final parentEdges = <(String, String)>[];
     for (final l in graph.parentLinks) {
       if (nodes.containsKey(l.parentId) && nodes.containsKey(l.childId)) {
-        edges.add((l.parentId, l.childId));
+        parentEdges.add((l.parentId, l.childId));
+      }
+    }
+    final spouseEdges = <(String, String)>[];
+    for (final l in graph.spouseLinks) {
+      if (l.status == MarriageStatus.married &&
+          nodes.containsKey(l.personAId) &&
+          nodes.containsKey(l.personBId)) {
+        spouseEdges.add((l.personAId, l.personBId));
       }
     }
 
     return _GraphLayout(
       nodes,
       Size(maxRowWidth + 80, gens.length * (_nodeH + _vGap) + 80),
-      edges,
+      parentEdges,
+      spouseEdges,
     );
   }
 }
 
 class _EdgePainter extends CustomPainter {
-  _EdgePainter({required this.layout, required this.color});
+  _EdgePainter({
+    required this.layout,
+    required this.color,
+    required this.spouseColor,
+  });
   final _GraphLayout layout;
   final Color color;
+  final Color spouseColor;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
+    final parent = Paint()
       ..color = color
       ..strokeWidth = 1.6
       ..style = PaintingStyle.stroke;
-    for (final (parentId, childId) in layout.edges) {
+    final spouse = Paint()
+      ..color = spouseColor
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    for (final (aId, bId) in layout.spouseEdges) {
+      final a = layout.nodes[aId]!.center;
+      final b = layout.nodes[bId]!.center;
+      canvas.drawLine(a, b, spouse);
+    }
+    for (final (parentId, childId) in layout.parentEdges) {
       final p = layout.nodes[parentId]!.center;
       final c = layout.nodes[childId]!.center;
       final mid = (p.dy + c.dy) / 2;
@@ -160,7 +230,7 @@ class _EdgePainter extends CustomPainter {
         ..lineTo(p.dx, mid)
         ..lineTo(c.dx, mid)
         ..lineTo(c.dx, c.dy - _nodeH / 2);
-      canvas.drawPath(path, paint);
+      canvas.drawPath(path, parent);
     }
   }
 
