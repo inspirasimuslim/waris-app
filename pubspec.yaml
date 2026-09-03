@@ -1,0 +1,50 @@
+name: waris_workspace
+publish_to: none
+
+environment:
+  sdk: ">=3.13.0 <4.0.0"
+
+# Dart pub workspace — semua package dikongsi satu lockfile.
+workspace:
+  - packages/faraid_engine
+  - packages/wali_engine
+  - packages/mahram_engine
+  - packages/family_graph
+  - app
+
+dev_dependencies:
+  lints: ^6.0.0
+  melos: ^8.6.0
+
+# Konfigurasi Melos 8 (dibaca dari pubspec.yaml, bukan melos.yaml).
+melos:
+  scripts:
+    analyze:
+      description: Jalankan dart analyze pada semua package.
+      exec:
+        command: dart analyze --fatal-infos
+        concurrency: 1
+
+    test:
+      description: Jalankan ujian pure-Dart (enjin + graf).
+      exec:
+        command: dart test
+        concurrency: 1
+      packageFilters:
+        dir-exists: test
+        flutter: false
+
+    test:flutter:
+      description: Jalankan ujian widget Flutter (app).
+      exec:
+        command: flutter test
+        concurrency: 1
+      packageFilters:
+        dir-exists: test
+        flutter: true
+
+    test:all:
+      description: Jalankan semua ujian (Dart + Flutter).
+      steps:
+        - melos run test
+        - melos run test:flutter

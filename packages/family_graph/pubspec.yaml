@@ -1,0 +1,16 @@
+name: family_graph
+description: Model graf keluarga, relationship resolver, dan heir extractor (pure Dart) untuk WARIS. Fasa 2.
+version: 0.0.1
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ">=3.13.0 <4.0.0"
+
+dependencies:
+  faraid_engine:
+    path: ../faraid_engine
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.0

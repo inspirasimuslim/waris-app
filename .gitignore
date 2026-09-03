@@ -1,0 +1,32 @@
+# Flutter / Dart
+**/build/
+.dart_tool/
+**/.dart_tool/
+.flutter-plugin-dependencies
+**/.flutter-plugin-dependencies
+.packages
+**/.packages
+*.iml
+
+# Dart pub workspace / Melos
+pubspec_overrides.yaml
+**/pubspec_overrides.yaml
+.fvm/
+
+# Ujian / liputan
+coverage/
+**/coverage/
+test/.test_coverage.dart
+*.log
+
+# Secrets — JANGAN sekali-kali commit
+*.env
+*.keystore
+*.jks
+key.properties
+google-services.json
+**/secrets/
+
+# IDE
+.vscode/
+.idea/
