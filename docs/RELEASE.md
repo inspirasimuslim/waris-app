@@ -16,8 +16,10 @@ Output: `app/build/app/outputs/flutter-apk/app-release.apk`
 ### Build pertama (2026-09-03)
 
 - `app-release.apk` **55.2 MB** (universal — semua ABI + enjin Flutter).
-  Melebihi sasaran <40MB SPEC 5.6 kerana universal; guna `--split-per-abi`
-  untuk APK per-seni-bina (~20MB) atau App Bundle untuk Play Store.
+- `--split-per-abi` (di bawah sasaran 40MB SPEC 5.6):
+  - `app-armeabi-v7a-release.apk` **16.7 MB**
+  - `app-arm64-v8a-release.apk` **19.2 MB**  ← untuk kebanyakan peranti moden
+  - `app-x86_64-release.apk` **20.6 MB** (emulator)
 - Ditandatangani dengan keystore ujian: `CN=WARIS Test, OU=Sakura Digital`
   (SHA-256 `9b3c1e12…`). Disahkan dengan `apksigner verify`.
 - `melos run test:all` — 224 ujian lulus sebelum build.
