@@ -93,3 +93,39 @@ bapa, dua bapa berbeza, umur kahwin) hanya MEMBENDERA melalui `validateGraph`.
 `HeirExtractor` mengambil `sonsSon`/`sonsDaughter` daripada anak lelaki si mati
 (hidup atau mati). Peringkat lebih dalam (cicit) belum diproses — akan dibendera
 apabila diperlukan. Cukup untuk kes lazim (anak lelaki mati, cucu mewarisi).
+
+---
+
+## 2026-09-03 — Fasa 3 (asas, belum lengkap DoD)
+
+### D-016 · Storan: JSON fail dulu, Drift/SQLite kemudian
+`InMemoryFamilyRepository` menyimpan graf sebagai satu fail JSON melalui
+`path_provider` — memenuhi "data kekal selepas app ditutup" (SPEC Fasa 3 DoD)
+tanpa perlukan `sqlite3` native + `build_runner`. Migrasi ke Drift (guna
+`familyGraphSchemaSql`) dijadualkan selepas APK pertama. Antara muka
+`FamilyRepository` abstrak supaya penukaran tidak menyentuh UI.
+
+### D-017 · Susun atur graf: band generasi, bukan force-directed penuh
+`FamilyGraphView` guna `CustomPainter` + `InteractiveViewer` (SPEC 3.3) dengan
+BFS generasi dan garisan penyambung ibu bapa–anak. Penolakan berulang untuk
+pertindihan mendatar (SPEC 3.3 langkah 4) dan unit pasangan bersebelahan penuh
+BELUM dilaksanakan — mencukupi untuk rangkaian kecil, perlu diperhalusi.
+
+### D-018 · Riverpod 3: `StateProvider` dari `legacy.dart`
+Riverpod 3 memindahkan `StateProvider` ke `package:flutter_riverpod/legacy.dart`.
+Repo memancarkan instance `FamilyGraph` BAHARU setiap perubahan kerana Riverpod
+menyahduplikasi `AsyncData` yang `==`.
+
+### D-019 · l10n: ARB + gen-l10n disediakan; migrasi rentetan berterusan
+`lib/l10n/app_ms.arb` + `app_en.arb`, kelas `L`, BM lalai (SPEC 3.8). Banyak
+rentetan UI masih inline — akan dipindahkan ke ARB secara berperingkat.
+
+### Status DoD Fasa 3 (BELUM lengkap — perlu peranti sebenar & lelaran visual)
+- ✅ Data kekal selepas app ditutup (JSON)
+- ✅ Aliran Tap → Connect → bottom sheet → tambah orang + cadangan pintar
+- ✅ 5 ujian widget (mula, bottom sheet, tambah orang, kad profil, cadangan)
+- ⚠️ Render graf: asas sahaja (D-017)
+- ⚠️ Mod fokus: tetapan orang fokus ada; had 3-generasi belum
+- ⚠️ Mod gelap: tema ditakrif, belum disahkan visual pada peranti
+- ⛔ Belum dijalankan pada emulator/peranti sebenar (perlu tindakan pemilik)
+- ⛔ Ujian sesi 30 minit tanpa ranap — belum
