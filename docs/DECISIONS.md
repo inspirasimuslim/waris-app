@@ -33,3 +33,35 @@ resolusi workspace bermakna semua package guna versi sama.
 ### D-006 · Repo GitHub private belum dibuat
 `git init` tempatan sudah ada. Menolak ke GitHub private memerlukan kredential
 pemilik (SPEC 0.1). Kerja diteruskan pada repo tempatan; tag milestone dibuat tempatan.
+
+---
+
+## 2026-09-03 — Fasa 1
+
+### D-007 · Silang-semak e-Faraid MAIS ditangguh
+SPEC 1.6 langkah 5 menetapkan 20 kes rawak dimasukkan ke e-Faraid MAIS dan
+dibandingkan. Ini memerlukan interaksi manual dengan kalkulator dalam talian —
+tidak dapat diautomasikan di sini. 130 kes dalaman lulus 100%. Tindakan pemilik.
+
+### D-008 · Radd: pasangan dikecualikan; baki tanpa waris lain ke Baitulmal
+Ikut pendapat majoriti (FARAID_RULES §4). Jika hanya pasangan tinggal, enjin
+memberi pasangan bahagian fardu sahaja dan menandakan baki sebagai Baitulmal
+(`allow_baitulmal`), bukan radd kepada pasangan. Malaysia moden kadang beri radd
+kepada pasangan bila tiada waris lain — boleh dijadikan pilihan ruleset kemudian.
+
+### D-009 · Kes di luar skop MVP yang dibendera (bukan diteka)
+`requiresManualReview` + amaran dikeluarkan untuk: musyarakah/himariyyah,
+jadd wal-ikhwah dengan mu'adda (campuran saudara s.i.s + sebapa), jadd
+wal-ikhwah dengan aul (jaminan 1/6 datuk melebihi baki), datuk bersama
+saudara perempuan sahaja (kaedah had fardu penuh). Selebihnya SPEC 1.5 lajur
+"MVP ✅" dilaksanakan penuh.
+
+### D-010 · Akdariyyah & Umariyyatain dikesan secara ketat
+Akdariyyah: si mati perempuan + suami + ibu + datuk + tepat seorang saudara
+perempuan (s.i.s ATAU sebapa), tiada waris lain — keputusan piawai 27 (H 9, M 6,
+GF 8, S 4). Umariyyatain: pasangan + ibu + bapa sahaja (selepas tapisan nasab,
+sebelum hajb) — ibu 1/3 baki.
+
+### D-011 · Money guna BigInt sen; `Fraction.toDouble()` untuk paparan sahaja
+Tiada `double` dalam laluan pengiraan. Agihan wang guna kaedah baki sen supaya
+jumlah agihan = harta bersih tepat ke sen.

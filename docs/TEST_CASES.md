@@ -25,3 +25,12 @@ Jumlah: **130 kes** (≥ 120 diperlukan SPEC 1.6).
 ## Status pengesahan
 
 Semua kes `verified_by: pending`. Lihat DECISIONS D-004.
+
+## Status pelaksanaan (Fasa 1)
+
+- 130 kes ditulis; **130/130 lulus** (`melos run test`).
+- Runner: `test/engine_cases_test.dart` + `test/support/case_runner.dart`.
+- CLI semakan: `dart run faraid_engine:check --dir test/cases` (untuk penasihat Syariah).
+- Ujian tambahan: `engine_quick_test.dart` (18 kes klasik), `trace_test.dart` (SPEC 1.5/1.7).
+- **Silang-semak e-Faraid MAIS (20 kes) BELUM dibuat** — memerlukan akses manual
+  kepada kalkulator dalam talian. Lihat DECISIONS D-007.

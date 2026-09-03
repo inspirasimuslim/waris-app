@@ -1,0 +1,494 @@
+# Hajb hirman (gugur terus) & hajb nuqsan (kurang bahagian). FARAID_RULES §3.
+# source: kaedah pendindingan standard mazhab Syafie. verified_by: pending.
+
+- id: FRD-031
+  name: "Anak lelaki mendinding cucu lelaki"
+  source: "Hajb hirman: far' warith lelaki lebih hampir"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: son, count: 1 }
+      - { type: sonsSon, count: 1 }
+  expected:
+    blocked: [sonsSon]
+    shares:
+      - { type: son, fraction: "1/1", basis: asabah, amount: 120000 }
+
+- id: FRD-032
+  name: "Anak lelaki mendinding saudara lelaki & perempuan seibu-sebapa"
+  source: "Hajb hirman saudara oleh far' warith lelaki"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 90000
+    heirs:
+      - { type: son, count: 1 }
+      - { type: fullBrother, count: 1 }
+      - { type: fullSister, count: 1 }
+  expected:
+    blocked: [fullBrother, fullSister]
+    shares:
+      - { type: son, fraction: "1/1", basis: asabah, amount: 90000 }
+
+- id: FRD-033
+  name: "Bapa mendinding datuk"
+  source: "Hajb hirman: bapa lebih hampir daripada datuk"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 60000
+    heirs:
+      - { type: father, count: 1 }
+      - { type: paternalGrandfather, count: 1 }
+      - { type: son, count: 1 }
+  expected:
+    blocked: [paternalGrandfather]
+    shares:
+      - { type: father, fraction: "1/6", basis: fardu, amount: 10000 }
+      - { type: son, fraction: "5/6", basis: asabah, amount: 50000 }
+
+- id: FRD-034
+  name: "Ibu mendinding nenek sebelah ibu"
+  source: "Hajb hirman: ibu mendinding semua nenek sebelahnya"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 60000
+    heirs:
+      - { type: mother, count: 1 }
+      - { type: maternalGrandmother, count: 1 }
+      - { type: son, count: 1 }
+  expected:
+    blocked: [maternalGrandmother]
+    shares:
+      - { type: mother, fraction: "1/6", basis: fardu, amount: 10000 }
+      - { type: son, fraction: "5/6", basis: asabah, amount: 50000 }
+
+- id: FRD-035
+  name: "Bapa mendinding nenek sebelah bapa"
+  source: "Hajb hirman: bapa mendinding nenek sebelahnya (mazhab Syafie)"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: father, count: 1 }
+      - { type: paternalGrandmother, count: 1 }
+      - { type: daughter, count: 1 }
+  expected:
+    blocked: [paternalGrandmother]
+    shares:
+      - { type: daughter, fraction: "1/2", basis: fardu, amount: 60000 }
+      - { type: father, fraction: "1/2", amount: 60000 }
+
+- id: FRD-036
+  name: "Far' warith mendinding saudara seibu"
+  source: "Hajb hirman: keturunan menghilangkan syarat kalalah"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: daughter, count: 1 }
+      - { type: maternalSibling, count: 2 }
+      - { type: fullBrother, count: 1 }
+  expected:
+    blocked: [maternalSibling]
+    shares:
+      - { type: daughter, fraction: "1/2", basis: fardu, amount: 60000 }
+      - { type: fullBrother, fraction: "1/2", basis: asabah, amount: 60000 }
+
+- id: FRD-037
+  name: "Bapa mendinding saudara seibu"
+  source: "Hajb hirman: usul lelaki menghilangkan syarat kalalah"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 90000
+    heirs:
+      - { type: father, count: 1 }
+      - { type: maternalSibling, count: 1 }
+      - { type: mother, count: 1 }
+  expected:
+    blocked: [maternalSibling]
+    shares:
+      - { type: mother, fraction: "1/3", basis: fardu, amount: 30000 }
+      - { type: father, fraction: "2/3", basis: asabah, amount: 60000 }
+
+- id: FRD-038
+  name: "Saudara lelaki seibu-sebapa mendinding saudara sebapa"
+  source: "Hajb hirman: s.i.s lebih kuat daripada sebapa"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 80000
+    heirs:
+      - { type: fullBrother, count: 1 }
+      - { type: paternalBrother, count: 1 }
+  expected:
+    blocked: [paternalBrother]
+    shares:
+      - { type: fullBrother, fraction: "1/1", basis: asabah, amount: 80000 }
+
+- id: FRD-039
+  name: "Bapa mendinding saudara sebapa"
+  source: "Hajb hirman"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 90000
+    heirs:
+      - { type: father, count: 1 }
+      - { type: paternalBrother, count: 2 }
+      - { type: mother, count: 1 }
+  expected:
+    blocked: [paternalBrother]
+    shares:
+      - { type: mother, fraction: "1/6", basis: fardu, amount: 15000 }
+      - { type: father, fraction: "5/6", basis: asabah, amount: 75000 }
+
+- id: FRD-040
+  name: "Anak lelaki mendinding anak saudara lelaki"
+  source: "Hajb hirman: asabah lebih hampir"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 100000
+    heirs:
+      - { type: son, count: 1 }
+      - { type: fullBrothersSon, count: 1 }
+  expected:
+    blocked: [fullBrothersSon]
+    shares:
+      - { type: son, fraction: "1/1", basis: asabah, amount: 100000 }
+
+- id: FRD-041
+  name: "Saudara lelaki s.i.s mendinding anak saudara & bapa saudara"
+  source: "Hajb hirman rantaian asabah"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: fullBrother, count: 1 }
+      - { type: fullBrothersSon, count: 1 }
+      - { type: fullPaternalUncle, count: 1 }
+  expected:
+    blocked: [fullBrothersSon, fullPaternalUncle]
+    shares:
+      - { type: fullBrother, fraction: "1/1", basis: asabah, amount: 120000 }
+
+- id: FRD-042
+  name: "Anak saudara lelaki mendinding bapa saudara"
+  source: "Hajb hirman rantaian asabah"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: fullBrothersSon, count: 1 }
+      - { type: fullPaternalUncle, count: 1 }
+  expected:
+    blocked: [fullPaternalUncle]
+    shares:
+      - { type: fullBrothersSon, fraction: "1/1", basis: asabah, amount: 120000 }
+
+- id: FRD-043
+  name: "Bapa saudara s.i.s mendinding bapa saudara sebapa"
+  source: "Hajb hirman: kekuatan s.i.s"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 90000
+    heirs:
+      - { type: fullPaternalUncle, count: 1 }
+      - { type: paternalUncle, count: 1 }
+  expected:
+    blocked: [paternalUncle]
+    shares:
+      - { type: fullPaternalUncle, fraction: "1/1", basis: asabah, amount: 90000 }
+
+- id: FRD-044
+  name: "Hajb nuqsan: suami 1/2 -> 1/4 kerana anak"
+  source: "Hajb nuqsan pasangan oleh far' warith"
+  verified_by: pending
+  input:
+    deceased_gender: female
+    net_estate: 200000
+    heirs:
+      - { type: husband, count: 1 }
+      - { type: son, count: 1 }
+  expected:
+    shares:
+      - { type: husband, fraction: "1/4", basis: fardu, amount: 50000 }
+      - { type: son, fraction: "3/4", basis: asabah, amount: 150000 }
+
+- id: FRD-045
+  name: "Hajb nuqsan: isteri 1/4 -> 1/8 kerana anak"
+  source: "Hajb nuqsan pasangan oleh far' warith"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 160000
+    heirs:
+      - { type: wife, count: 1 }
+      - { type: daughter, count: 1 }
+      - { type: fullBrother, count: 1 }
+  expected:
+    shares:
+      - { type: wife, fraction: "1/8", basis: fardu, amount: 20000 }
+      - { type: daughter, fraction: "1/2", basis: fardu, amount: 80000 }
+      - { type: fullBrother, fraction: "3/8", basis: asabah, amount: 60000 }
+
+- id: FRD-046
+  name: "Hajb nuqsan: ibu 1/3 -> 1/6 kerana anak"
+  source: "Hajb nuqsan ibu oleh far' warith"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 60000
+    heirs:
+      - { type: mother, count: 1 }
+      - { type: daughter, count: 1 }
+      - { type: fullBrother, count: 1 }
+  expected:
+    shares:
+      - { type: mother, fraction: "1/6", basis: fardu, amount: 10000 }
+      - { type: daughter, fraction: "1/2", basis: fardu, amount: 30000 }
+      - { type: fullBrother, fraction: "1/3", basis: asabah, amount: 20000 }
+
+- id: FRD-047
+  name: "Hajb nuqsan: ibu 1/3 -> 1/6 kerana dua adik-beradik (walaupun terdinding)"
+  source: "Jam' min al-ikhwah: 2+ adik-beradik menurunkan ibu walau mereka terdinding oleh bapa"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: mother, count: 1 }
+      - { type: father, count: 1 }
+      - { type: fullBrother, count: 2 }
+  expected:
+    blocked: [fullBrother]
+    shares:
+      - { type: mother, fraction: "1/6", basis: fardu, amount: 20000 }
+      - { type: father, fraction: "5/6", basis: asabah, amount: 100000 }
+
+- id: FRD-048
+  name: "Seorang adik-beradik sahaja TIDAK menurunkan ibu"
+  source: "Jam' min al-ikhwah memerlukan sekurang-kurangnya dua"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 90000
+    heirs:
+      - { type: mother, count: 1 }
+      - { type: father, count: 1 }
+      - { type: fullBrother, count: 1 }
+  expected:
+    blocked: [fullBrother]
+    shares:
+      - { type: mother, fraction: "1/3", basis: fardu, amount: 30000 }
+      - { type: father, fraction: "2/3", basis: asabah, amount: 60000 }
+
+- id: FRD-049
+  name: "Anak lelaki mendinding cucu perempuan"
+  source: "Hajb hirman"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: son, count: 1 }
+      - { type: sonsDaughter, count: 2 }
+  expected:
+    blocked: [sonsDaughter]
+    shares:
+      - { type: son, fraction: "1/1", basis: asabah, amount: 120000 }
+
+- id: FRD-050
+  name: "Dua anak perempuan mendinding cucu perempuan (tiada cucu lelaki)"
+  source: "Hajb hirman: 2/3 telah diambil dua anak perempuan"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 180000
+    heirs:
+      - { type: daughter, count: 2 }
+      - { type: sonsDaughter, count: 1 }
+      - { type: fullBrother, count: 1 }
+  expected:
+    blocked: [sonsDaughter]
+    shares:
+      - { type: daughter, count: 2, fraction: "2/3", fraction_each: "1/3", basis: fardu, amount: 120000 }
+      - { type: fullBrother, fraction: "1/3", basis: asabah, amount: 60000 }
+
+- id: FRD-051
+  name: "Cucu lelaki menyelamatkan cucu perempuan daripada hajb dua anak perempuan"
+  source: "Asabah bi-ghayrihi: cucu perempuan mengambil baki bersama cucu lelaki 2:1"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 180000
+    heirs:
+      - { type: daughter, count: 2 }
+      - { type: sonsSon, count: 1 }
+      - { type: sonsDaughter, count: 1 }
+  expected:
+    shares:
+      - { type: daughter, count: 2, fraction: "2/3", fraction_each: "1/3", basis: fardu, amount: 120000 }
+      - { type: sonsSon, fraction: "2/9", basis: asabah, amount: 40000 }
+      - { type: sonsDaughter, fraction: "1/9", basis: asabah, amount: 20000 }
+
+- id: FRD-052
+  name: "Anak lelaki mendinding bapa daripada asabah (bapa kekal 1/6)"
+  source: "Hajb nuqsan: bapa terhad kepada fardu 1/6 apabila ada anak lelaki"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 600000
+    heirs:
+      - { type: father, count: 1 }
+      - { type: son, count: 2 }
+  expected:
+    shares:
+      - { type: father, fraction: "1/6", basis: fardu, amount: 100000 }
+      - { type: son, count: 2, fraction: "5/6", fraction_each: "5/12", basis: asabah, amount: 500000 }
+
+- id: FRD-053
+  name: "Saudara perempuan s.i.s menjadi asabah ma'a-ghayrihi mendinding saudara sebapa"
+  source: "Hajb hirman: s/p s.i.s sebagai asabah menghalang saudara sebapa"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: daughter, count: 1 }
+      - { type: fullSister, count: 1 }
+      - { type: paternalBrother, count: 1 }
+  expected:
+    blocked: [paternalBrother]
+    shares:
+      - { type: daughter, fraction: "1/2", basis: fardu, amount: 60000 }
+      - { type: fullSister, fraction: "1/2", basis: asabah, amount: 60000 }
+
+- id: FRD-054
+  name: "Dua saudara perempuan s.i.s mendinding saudara perempuan sebapa"
+  source: "Hajb hirman: 2/3 telah penuh, tiada saudara lelaki sebapa"
+  verified_by: pending
+  input:
+    deceased_gender: female
+    net_estate: 90000
+    heirs:
+      - { type: fullSister, count: 2 }
+      - { type: paternalSister, count: 1 }
+      - { type: fullPaternalUncle, count: 1 }
+  expected:
+    blocked: [paternalSister]
+    shares:
+      - { type: fullSister, count: 2, fraction: "2/3", fraction_each: "1/3", basis: fardu, amount: 60000 }
+      - { type: fullPaternalUncle, fraction: "1/3", basis: asabah, amount: 30000 }
+
+- id: FRD-055
+  name: "Seorang saudara perempuan s.i.s + saudara perempuan sebapa (takmilah 1/6)"
+  source: "S/p sebapa 1/6 melengkapkan 2/3"
+  verified_by: pending
+  input:
+    deceased_gender: female
+    net_estate: 120000
+    heirs:
+      - { type: fullSister, count: 1 }
+      - { type: paternalSister, count: 1 }
+      - { type: fullPaternalUncle, count: 1 }
+  expected:
+    shares:
+      - { type: fullSister, fraction: "1/2", basis: fardu, amount: 60000 }
+      - { type: paternalSister, fraction: "1/6", basis: fardu, amount: 20000 }
+      - { type: fullPaternalUncle, fraction: "1/3", basis: asabah, amount: 40000 }
+
+- id: FRD-056
+  name: "Cucu perempuan + seorang anak perempuan (takmilah 1/6) + saudara lelaki"
+  source: "Cucu perempuan 1/6 melengkapkan 2/3 bersama seorang anak perempuan"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: daughter, count: 1 }
+      - { type: sonsDaughter, count: 2 }
+      - { type: fullBrother, count: 1 }
+  expected:
+    shares:
+      - { type: daughter, fraction: "1/2", basis: fardu, amount: 60000 }
+      - { type: sonsDaughter, count: 2, fraction: "1/6", fraction_each: "1/12", basis: fardu, amount: 20000 }
+      - { type: fullBrother, fraction: "1/3", basis: asabah, amount: 40000 }
+
+- id: FRD-057
+  name: "Datuk (tiada bapa) berkelakuan seperti bapa: 1/6 + asabah bersama anak perempuan"
+  source: "Datuk menggantikan bapa apabila bapa tiada"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: paternalGrandfather, count: 1 }
+      - { type: daughter, count: 1 }
+  expected:
+    shares:
+      - { type: daughter, fraction: "1/2", basis: fardu, amount: 60000 }
+      - { type: paternalGrandfather, fraction: "1/2", amount: 60000 }
+
+- id: FRD-058
+  name: "Datuk mendinding saudara seibu"
+  source: "Hajb hirman: datuk usul lelaki"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 60000
+    heirs:
+      - { type: paternalGrandfather, count: 1 }
+      - { type: maternalSibling, count: 2 }
+      - { type: mother, count: 1 }
+  expected:
+    blocked: [maternalSibling]
+    shares:
+      - { type: mother, fraction: "1/6", basis: fardu, amount: 10000 }
+      - { type: paternalGrandfather, fraction: "5/6", basis: asabah, amount: 50000 }
+
+- id: FRD-059
+  name: "Cucu lelaki (tiada anak lelaki) sebagai asabah + bapa"
+  source: "Bapa 1/6 fardu; cucu lelaki asabah"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: father, count: 1 }
+      - { type: mother, count: 1 }
+      - { type: sonsSon, count: 1 }
+  expected:
+    shares:
+      - { type: father, fraction: "1/6", basis: fardu, amount: 20000 }
+      - { type: mother, fraction: "1/6", basis: fardu, amount: 20000 }
+      - { type: sonsSon, fraction: "2/3", basis: asabah, amount: 80000 }
+
+- id: FRD-060
+  name: "Suami + ibu + bapa + anak lelaki (bukan umariyyatain kerana ada anak)"
+  source: "Semua fardu berkurang; anak lelaki asabah"
+  verified_by: pending
+  input:
+    deceased_gender: female
+    net_estate: 240000
+    heirs:
+      - { type: husband, count: 1 }
+      - { type: mother, count: 1 }
+      - { type: father, count: 1 }
+      - { type: son, count: 1 }
+  expected:
+    shares:
+      - { type: husband, fraction: "1/4", basis: fardu, amount: 60000 }
+      - { type: mother, fraction: "1/6", basis: fardu, amount: 40000 }
+      - { type: father, fraction: "1/6", basis: fardu, amount: 40000 }
+      - { type: son, fraction: "5/12", basis: asabah, amount: 100000 }

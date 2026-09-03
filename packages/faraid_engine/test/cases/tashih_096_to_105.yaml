@@ -1,0 +1,190 @@
+# Tashih — asal masalah dinaikkan supaya setiap bahagian individu jadi integer.
+# FARAID_RULES §6. Enjin melaporkan asal_masalah (LCM penyebut fardu) dan
+# asal_masalah_tashih (LCM penyebut bahagian setiap individu).
+# source: kaedah tashih standard. verified_by: pending.
+
+- id: FRD-096
+  name: "Bapa + ibu + lima anak lelaki (6 -> 30)"
+  source: "Baki 2/3 tidak boleh dibahagi 5 -> tashih 6 x 5 = 30"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 300000
+    heirs:
+      - { type: father, count: 1 }
+      - { type: mother, count: 1 }
+      - { type: son, count: 5 }
+  expected:
+    asal_masalah: 6
+    asal_masalah_tashih: 30
+    shares:
+      - { type: father, fraction: "1/6", basis: fardu, amount: 50000 }
+      - { type: mother, fraction: "1/6", basis: fardu, amount: 50000 }
+      - { type: son, count: 5, fraction: "2/3", fraction_each: "2/15", basis: asabah, amount: 200000 }
+
+- id: FRD-097
+  name: "Isteri + tiga anak lelaki + dua anak perempuan (8 -> 64)"
+  source: "Baki 7/8 dibahagi 8 bahagian; tashih 8 x 8 = 64"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 640000
+    heirs:
+      - { type: wife, count: 1 }
+      - { type: son, count: 3 }
+      - { type: daughter, count: 2 }
+  expected:
+    asal_masalah: 8
+    asal_masalah_tashih: 64
+    shares:
+      - { type: wife, fraction: "1/8", basis: fardu, amount: 80000 }
+      - { type: son, count: 3, fraction: "21/32", fraction_each: "7/32", basis: asabah, amount: 420000 }
+      - { type: daughter, count: 2, fraction: "7/32", fraction_each: "7/64", basis: asabah, amount: 140000 }
+
+- id: FRD-098
+  name: "Suami + nenek sebelah bapa + lima saudara lelaki s.i.s (6 -> 30)"
+  source: "Baki 1/3 dibahagi 5; tashih 6 x 5 = 30"
+  verified_by: pending
+  input:
+    deceased_gender: female
+    net_estate: 300000
+    heirs:
+      - { type: husband, count: 1 }
+      - { type: paternalGrandmother, count: 1 }
+      - { type: fullBrother, count: 5 }
+  expected:
+    asal_masalah: 6
+    asal_masalah_tashih: 30
+    shares:
+      - { type: husband, fraction: "1/2", basis: fardu, amount: 150000 }
+      - { type: paternalGrandmother, fraction: "1/6", basis: fardu, amount: 50000 }
+      - { type: fullBrother, count: 5, fraction: "1/3", fraction_each: "1/15", basis: asabah, amount: 100000 }
+
+- id: FRD-099
+  name: "Isteri + enam anak lelaki (8 -> 48)"
+  source: "Isteri 1/8 (ada anak); baki 7/8 dibahagi 6 -> 7/48; tashih 8 -> 48"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 480000
+    heirs:
+      - { type: wife, count: 1 }
+      - { type: son, count: 6 }
+  expected:
+    asal_masalah: 8
+    asal_masalah_tashih: 48
+    shares:
+      - { type: wife, fraction: "1/8", basis: fardu, amount: 60000 }
+      - { type: son, count: 6, fraction: "7/8", fraction_each: "7/48", basis: asabah, amount: 420000 }
+
+- id: FRD-100
+  name: "Ibu + dua anak perempuan + tiga s/p sebapa (6 -> 18)"
+  source: "S/p sebapa asabah ma'a-ghayrihi berkongsi 1/6; tashih 6 x 3 = 18"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 180000
+    heirs:
+      - { type: mother, count: 1 }
+      - { type: daughter, count: 2 }
+      - { type: paternalSister, count: 3 }
+  expected:
+    asal_masalah: 6
+    asal_masalah_tashih: 18
+    shares:
+      - { type: mother, fraction: "1/6", basis: fardu, amount: 30000 }
+      - { type: daughter, count: 2, fraction: "2/3", fraction_each: "1/3", basis: fardu, amount: 120000 }
+      - { type: paternalSister, count: 3, fraction: "1/6", fraction_each: "1/18", basis: asabah, amount: 30000 }
+
+- id: FRD-101
+  name: "Bapa + ibu + tiga anak lelaki + dua anak perempuan (6 -> 12)"
+  source: "Baki 2/3 dibahagi 8 bahagian; tashih 6 -> 12"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 240000
+    heirs:
+      - { type: father, count: 1 }
+      - { type: mother, count: 1 }
+      - { type: son, count: 3 }
+      - { type: daughter, count: 2 }
+  expected:
+    asal_masalah: 6
+    asal_masalah_tashih: 12
+    shares:
+      - { type: father, fraction: "1/6", basis: fardu, amount: 40000 }
+      - { type: mother, fraction: "1/6", basis: fardu, amount: 40000 }
+      - { type: son, count: 3, fraction: "1/2", fraction_each: "1/6", basis: asabah, amount: 120000 }
+      - { type: daughter, count: 2, fraction: "1/6", fraction_each: "1/12", basis: asabah, amount: 40000 }
+
+- id: FRD-102
+  name: "Isteri + lima anak perempuan + bapa (24 -> 120)"
+  source: "Anak perempuan 2/3 dibahagi 5; bapa 1/6 + baki 1/24; tashih 24 x 5 = 120"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 240000
+    heirs:
+      - { type: wife, count: 1 }
+      - { type: daughter, count: 5 }
+      - { type: father, count: 1 }
+  expected:
+    asal_masalah: 24
+    asal_masalah_tashih: 120
+    shares:
+      - { type: wife, fraction: "1/8", basis: fardu, amount: 30000 }
+      - { type: daughter, count: 5, fraction: "2/3", fraction_each: "2/15", basis: fardu, amount: 160000 }
+      - { type: father, fraction: "5/24", basis: asabah, amount: 50000 }
+
+- id: FRD-103
+  name: "Suami + lima saudara perempuan s.i.s (aul 6->7, tashih -> 35)"
+  source: "1/2 + 2/3 = 7/6; aul 6->7; 4/7 dibahagi 5 -> tashih 35"
+  verified_by: pending
+  input:
+    deceased_gender: female
+    net_estate: 350000
+    heirs:
+      - { type: husband, count: 1 }
+      - { type: fullSister, count: 5 }
+  expected:
+    asal_masalah: 6
+    asal_masalah_tashih: 35
+    shares:
+      - { type: husband, fraction: "3/7", basis: aul, amount: 150000 }
+      - { type: fullSister, count: 5, fraction: "4/7", fraction_each: "4/35", basis: aul, amount: 200000 }
+
+- id: FRD-104
+  name: "Suami + ibu + empat saudara perempuan sebapa (aul 6->8)"
+  source: "Ibu 1/6 (jam'); 1/2 + 1/6 + 2/3 = 8/6; aul 6->8; 1/2 dibahagi 4 -> 1/8"
+  verified_by: pending
+  input:
+    deceased_gender: female
+    net_estate: 240000
+    heirs:
+      - { type: husband, count: 1 }
+      - { type: mother, count: 1 }
+      - { type: paternalSister, count: 4 }
+  expected:
+    asal_masalah: 6
+    asal_masalah_tashih: 8
+    shares:
+      - { type: husband, fraction: "3/8", basis: aul, amount: 90000 }
+      - { type: mother, fraction: "1/8", basis: aul, amount: 30000 }
+      - { type: paternalSister, count: 4, fraction: "1/2", fraction_each: "1/8", basis: aul, amount: 120000 }
+
+- id: FRD-105
+  name: "Tiga isteri + dua anak lelaki (8 -> 48)"
+  source: "Isteri 1/8 dibahagi 3; anak lelaki 7/8 dibahagi 2; tashih 8 -> 48"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 480000
+    heirs:
+      - { type: wife, count: 3 }
+      - { type: son, count: 2 }
+  expected:
+    asal_masalah: 8
+    asal_masalah_tashih: 48
+    shares:
+      - { type: wife, count: 3, fraction: "1/8", fraction_each: "1/24", basis: fardu, amount: 60000 }
+      - { type: son, count: 2, fraction: "7/8", fraction_each: "7/16", basis: asabah, amount: 420000 }

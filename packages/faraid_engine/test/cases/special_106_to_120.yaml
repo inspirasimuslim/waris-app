@@ -1,0 +1,258 @@
+# Kes khas — umariyyatain, akdariyyah, datuk bersama adik-beradik (jadd
+# wal-ikhwah), asabah bi-ghayrihi & ma'a-ghayrihi. SPEC 1.4 langkah 8.
+# source: kaedah kes khas mazhab Syafie. verified_by: pending.
+
+- id: FRD-106
+  name: "Umariyyatain — suami + ibu + bapa (SPEC contoh FRD-047)"
+  source: "Kitab faraid, bab umariyyatain: ibu 1/3 daripada baki"
+  verified_by: pending
+  input:
+    deceased_gender: female
+    net_estate: 120000
+    heirs:
+      - { type: husband, count: 1 }
+      - { type: mother, count: 1 }
+      - { type: father, count: 1 }
+  expected:
+    status: ok
+    asal_masalah: 6
+    shares:
+      - { type: husband, fraction: "1/2", basis: fardu, amount: 60000 }
+      - { type: mother, fraction: "1/6", amount: 20000 }
+      - { type: father, fraction: "1/3", basis: asabah, amount: 40000 }
+
+- id: FRD-107
+  name: "Umariyyatain — isteri + ibu + bapa"
+  source: "Bab umariyyatain: ibu 1/3 daripada baki (3/4) = 1/4"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: wife, count: 1 }
+      - { type: mother, count: 1 }
+      - { type: father, count: 1 }
+  expected:
+    asal_masalah: 4
+    shares:
+      - { type: wife, fraction: "1/4", basis: fardu, amount: 30000 }
+      - { type: mother, fraction: "1/4", amount: 30000 }
+      - { type: father, fraction: "1/2", basis: asabah, amount: 60000 }
+
+- id: FRD-108
+  name: "Akdariyyah — suami + ibu + datuk + seorang s/p s.i.s"
+  source: "Bab akdariyyah: asal 6 -> aul 9 -> tashih 27"
+  verified_by: pending
+  input:
+    deceased_gender: female
+    net_estate: 270000
+    heirs:
+      - { type: husband, count: 1 }
+      - { type: mother, count: 1 }
+      - { type: paternalGrandfather, count: 1 }
+      - { type: fullSister, count: 1 }
+  expected:
+    asal_masalah: 6
+    asal_masalah_tashih: 27
+    shares:
+      - { type: husband, fraction: "9/27", amount: 90000 }
+      - { type: mother, fraction: "6/27", amount: 60000 }
+      - { type: paternalGrandfather, fraction: "8/27", basis: asabah, amount: 80000 }
+      - { type: fullSister, fraction: "4/27", basis: asabah, amount: 40000 }
+
+- id: FRD-109
+  name: "Akdariyyah — dengan seorang s/p sebapa"
+  source: "Sama seperti akdariyyah dengan s/p sebapa menggantikan s.i.s"
+  verified_by: pending
+  input:
+    deceased_gender: female
+    net_estate: 270000
+    heirs:
+      - { type: husband, count: 1 }
+      - { type: mother, count: 1 }
+      - { type: paternalGrandfather, count: 1 }
+      - { type: paternalSister, count: 1 }
+  expected:
+    asal_masalah_tashih: 27
+    shares:
+      - { type: husband, fraction: "9/27", amount: 90000 }
+      - { type: mother, fraction: "6/27", amount: 60000 }
+      - { type: paternalGrandfather, fraction: "8/27", basis: asabah, amount: 80000 }
+      - { type: paternalSister, fraction: "4/27", basis: asabah, amount: 40000 }
+
+- id: FRD-110
+  name: "Jadd wal-ikhwah — datuk + seorang saudara lelaki s.i.s"
+  source: "Muqasamah (1:1) lebih baik daripada 1/3 harta"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: paternalGrandfather, count: 1 }
+      - { type: fullBrother, count: 1 }
+  expected:
+    shares:
+      - { type: paternalGrandfather, fraction: "1/2", basis: asabah, amount: 60000 }
+      - { type: fullBrother, fraction: "1/2", basis: asabah, amount: 60000 }
+
+- id: FRD-111
+  name: "Jadd wal-ikhwah — datuk + tiga saudara lelaki s.i.s"
+  source: "1/3 harta lebih baik daripada muqasamah (2/8)"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 90000
+    heirs:
+      - { type: paternalGrandfather, count: 1 }
+      - { type: fullBrother, count: 3 }
+  expected:
+    shares:
+      - { type: paternalGrandfather, fraction: "1/3", basis: asabah, amount: 30000 }
+      - { type: fullBrother, count: 3, fraction: "2/3", fraction_each: "2/9", basis: asabah, amount: 60000 }
+
+- id: FRD-112
+  name: "Jadd wal-ikhwah — datuk + saudara lelaki + saudara perempuan s.i.s"
+  source: "Muqasamah: datuk 2, saudara lelaki 2, saudara perempuan 1"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 100000
+    heirs:
+      - { type: paternalGrandfather, count: 1 }
+      - { type: fullBrother, count: 1 }
+      - { type: fullSister, count: 1 }
+  expected:
+    shares:
+      - { type: paternalGrandfather, fraction: "2/5", basis: asabah, amount: 40000 }
+      - { type: fullBrother, fraction: "2/5", basis: asabah, amount: 40000 }
+      - { type: fullSister, fraction: "1/5", basis: asabah, amount: 20000 }
+
+- id: FRD-113
+  name: "Jadd wal-ikhwah — suami + datuk + dua saudara lelaki s.i.s"
+  source: "Suami 1/2; datuk terbaik = 1/6 harta = 1/3 baki = muqasamah"
+  verified_by: pending
+  input:
+    deceased_gender: female
+    net_estate: 120000
+    heirs:
+      - { type: husband, count: 1 }
+      - { type: paternalGrandfather, count: 1 }
+      - { type: fullBrother, count: 2 }
+  expected:
+    shares:
+      - { type: husband, fraction: "1/2", basis: fardu, amount: 60000 }
+      - { type: paternalGrandfather, fraction: "1/6", basis: asabah, amount: 20000 }
+      - { type: fullBrother, count: 2, fraction: "1/3", fraction_each: "1/6", basis: asabah, amount: 40000 }
+
+- id: FRD-114
+  name: "Jadd wal-ikhwah — ibu + datuk + tiga saudara lelaki s.i.s"
+  source: "Ibu 1/6 (jam'); datuk 1/3 baki = 5/18"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 180000
+    heirs:
+      - { type: mother, count: 1 }
+      - { type: paternalGrandfather, count: 1 }
+      - { type: fullBrother, count: 3 }
+  expected:
+    shares:
+      - { type: mother, fraction: "1/6", basis: fardu, amount: 30000 }
+      - { type: paternalGrandfather, fraction: "5/18", basis: asabah, amount: 50000 }
+      - { type: fullBrother, count: 3, fraction: "5/9", fraction_each: "5/27", basis: asabah, amount: 100000 }
+
+- id: FRD-115
+  name: "Jadd wal-ikhwah — seorang anak perempuan + datuk + dua saudara lelaki s.i.s"
+  source: "Anak perempuan 1/2; datuk 1/6 harta; saudara baki"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: daughter, count: 1 }
+      - { type: paternalGrandfather, count: 1 }
+      - { type: fullBrother, count: 2 }
+  expected:
+    shares:
+      - { type: daughter, fraction: "1/2", basis: fardu, amount: 60000 }
+      - { type: paternalGrandfather, fraction: "1/6", basis: asabah, amount: 20000 }
+      - { type: fullBrother, count: 2, fraction: "1/3", fraction_each: "1/6", basis: asabah, amount: 40000 }
+
+- id: FRD-116
+  name: "Asabah ma'a-ghayrihi — dua anak perempuan + saudara perempuan s.i.s"
+  source: "Dua anak perempuan 2/3; saudara perempuan asabah ma'a-ghayrihi mengambil baki"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 150000
+    heirs:
+      - { type: daughter, count: 2 }
+      - { type: fullSister, count: 1 }
+  expected:
+    shares:
+      - { type: daughter, count: 2, fraction: "2/3", fraction_each: "1/3", basis: fardu, amount: 100000 }
+      - { type: fullSister, fraction: "1/3", basis: asabah, amount: 50000 }
+
+- id: FRD-117
+  name: "Asabah ma'a-ghayrihi — cucu perempuan + saudara perempuan s.i.s"
+  source: "Cucu perempuan 1/2; saudara perempuan asabah ma'a-ghayrihi 1/2"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 200000
+    heirs:
+      - { type: sonsDaughter, count: 1 }
+      - { type: fullSister, count: 1 }
+  expected:
+    shares:
+      - { type: sonsDaughter, fraction: "1/2", basis: fardu, amount: 100000 }
+      - { type: fullSister, fraction: "1/2", basis: asabah, amount: 100000 }
+
+- id: FRD-118
+  name: "Asabah bi-ghayrihi peringkat cucu — anak perempuan + cucu lelaki + dua cucu perempuan"
+  source: "Anak perempuan 1/2; baki kepada cucu lelaki & cucu perempuan 2:1"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 160000
+    heirs:
+      - { type: daughter, count: 1 }
+      - { type: sonsSon, count: 1 }
+      - { type: sonsDaughter, count: 2 }
+  expected:
+    shares:
+      - { type: daughter, fraction: "1/2", basis: fardu, amount: 80000 }
+      - { type: sonsSon, fraction: "1/4", basis: asabah, amount: 40000 }
+      - { type: sonsDaughter, count: 2, fraction: "1/4", fraction_each: "1/8", basis: asabah, amount: 40000 }
+
+- id: FRD-119
+  name: "Asabah ma'a-ghayrihi — seorang anak perempuan + saudara perempuan sebapa"
+  source: "Anak perempuan 1/2; s/p sebapa asabah ma'a-ghayrihi 1/2"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: daughter, count: 1 }
+      - { type: paternalSister, count: 1 }
+  expected:
+    shares:
+      - { type: daughter, fraction: "1/2", basis: fardu, amount: 60000 }
+      - { type: paternalSister, fraction: "1/2", basis: asabah, amount: 60000 }
+
+- id: FRD-120
+  name: "Jadd wal-ikhwah — isteri + datuk + empat saudara lelaki s.i.s"
+  source: "Isteri 1/4; datuk 1/3 baki (3/4) = 1/4"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 240000
+    heirs:
+      - { type: wife, count: 1 }
+      - { type: paternalGrandfather, count: 1 }
+      - { type: fullBrother, count: 4 }
+  expected:
+    shares:
+      - { type: wife, fraction: "1/4", basis: fardu, amount: 60000 }
+      - { type: paternalGrandfather, fraction: "1/4", basis: asabah, amount: 60000 }
+      - { type: fullBrother, count: 4, fraction: "1/2", fraction_each: "1/8", basis: asabah, amount: 120000 }

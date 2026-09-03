@@ -1,0 +1,175 @@
+# Nasab tidak sabit — waris dengan nasab_confirmed: false ditapis keluar
+# SEBELUM pengiraan (SPEC 1.4 langkah 2, SPEC 2.5). Enjin merekod mereka dalam
+# senarai `blocked` dengan sebab nasab, bukan hajb.
+# source: prinsip WARIS — nasab menapis waris, bukan graf keluarga. verified_by: pending.
+
+- id: FRD-121
+  name: "Anak lelaki nasab tidak sabit + isteri + ibu + bapa"
+  source: "Anak ditapis -> menjadi umariyyatain (isteri + ibu + bapa)"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: son, count: 1, nasab_confirmed: false }
+      - { type: wife, count: 1 }
+      - { type: mother, count: 1 }
+      - { type: father, count: 1 }
+  expected:
+    blocked: [son]
+    shares:
+      - { type: wife, fraction: "1/4", basis: fardu, amount: 30000 }
+      - { type: mother, fraction: "1/4", amount: 30000 }
+      - { type: father, fraction: "1/2", basis: asabah, amount: 60000 }
+
+- id: FRD-122
+  name: "Anak perempuan nasab tidak sabit + isteri + saudara lelaki s.i.s"
+  source: "Anak ditapis -> isteri 1/4 (kalalah), baki asabah"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: daughter, count: 1, nasab_confirmed: false }
+      - { type: wife, count: 1 }
+      - { type: fullBrother, count: 1 }
+  expected:
+    blocked: [daughter]
+    shares:
+      - { type: wife, fraction: "1/4", basis: fardu, amount: 30000 }
+      - { type: fullBrother, fraction: "3/4", basis: asabah, amount: 90000 }
+
+- id: FRD-123
+  name: "Dua anak lelaki nasab tidak sabit + ibu + bapa"
+  source: "Anak ditapis -> ibu 1/3, bapa asabah"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 90000
+    heirs:
+      - { type: son, count: 2, nasab_confirmed: false }
+      - { type: mother, count: 1 }
+      - { type: father, count: 1 }
+  expected:
+    blocked: [son]
+    shares:
+      - { type: mother, fraction: "1/3", basis: fardu, amount: 30000 }
+      - { type: father, fraction: "2/3", basis: asabah, amount: 60000 }
+
+- id: FRD-124
+  name: "Anak lelaki sabit + anak perempuan tidak sabit + isteri"
+  source: "Hanya anak perempuan ditapis; anak lelaki kekal asabah"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 160000
+    heirs:
+      - { type: son, count: 1 }
+      - { type: daughter, count: 1, nasab_confirmed: false }
+      - { type: wife, count: 1 }
+  expected:
+    blocked: [daughter]
+    shares:
+      - { type: wife, fraction: "1/8", basis: fardu, amount: 20000 }
+      - { type: son, fraction: "7/8", basis: asabah, amount: 140000 }
+
+- id: FRD-125
+  name: "Bapa nasab tidak sabit + ibu + suami"
+  source: "Bapa ditapis -> suami 1/2, ibu 1/3 + radd = 1/2"
+  verified_by: pending
+  input:
+    deceased_gender: female
+    net_estate: 120000
+    heirs:
+      - { type: father, count: 1, nasab_confirmed: false }
+      - { type: mother, count: 1 }
+      - { type: husband, count: 1 }
+  expected:
+    blocked: [father]
+    shares:
+      - { type: husband, fraction: "1/2", basis: fardu, amount: 60000 }
+      - { type: mother, fraction: "1/2", basis: radd, amount: 60000 }
+
+- id: FRD-126
+  name: "Cucu lelaki nasab tidak sabit + anak perempuan + saudara lelaki s.i.s"
+  source: "Cucu ditapis -> anak perempuan 1/2, baki asabah"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: sonsSon, count: 1, nasab_confirmed: false }
+      - { type: daughter, count: 1 }
+      - { type: fullBrother, count: 1 }
+  expected:
+    blocked: [sonsSon]
+    shares:
+      - { type: daughter, fraction: "1/2", basis: fardu, amount: 60000 }
+      - { type: fullBrother, fraction: "1/2", basis: asabah, amount: 60000 }
+
+- id: FRD-127
+  name: "Saudara lelaki s.i.s nasab tidak sabit + ibu + bapa"
+  source: "Saudara ditapis -> tidak dikira untuk jam'; ibu 1/3"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 90000
+    heirs:
+      - { type: fullBrother, count: 1, nasab_confirmed: false }
+      - { type: mother, count: 1 }
+      - { type: father, count: 1 }
+  expected:
+    blocked: [fullBrother]
+    shares:
+      - { type: mother, fraction: "1/3", basis: fardu, amount: 30000 }
+      - { type: father, fraction: "2/3", basis: asabah, amount: 60000 }
+
+- id: FRD-128
+  name: "Saudara perempuan s.i.s nasab tidak sabit + suami (baki Baitulmal)"
+  source: "Saudara ditapis -> suami 1/2, baki 1/2 kepada Baitulmal"
+  verified_by: pending
+  input:
+    deceased_gender: female
+    net_estate: 100000
+    heirs:
+      - { type: fullSister, count: 1, nasab_confirmed: false }
+      - { type: husband, count: 1 }
+  expected:
+    allow_baitulmal: true
+    blocked: [fullSister]
+    shares:
+      - { type: husband, fraction: "1/2", basis: fardu, amount: 50000 }
+
+- id: FRD-129
+  name: "Cucu perempuan nasab tidak sabit + anak perempuan + ibu"
+  source: "Cucu ditapis -> anak perempuan 1/2 + ibu 1/6, radd nisbah 3:1"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 120000
+    heirs:
+      - { type: sonsDaughter, count: 1, nasab_confirmed: false }
+      - { type: daughter, count: 1 }
+      - { type: mother, count: 1 }
+  expected:
+    blocked: [sonsDaughter]
+    shares:
+      - { type: daughter, fraction: "3/4", basis: radd, amount: 90000 }
+      - { type: mother, fraction: "1/4", basis: radd, amount: 30000 }
+
+- id: FRD-130
+  name: "Datuk nasab tidak sabit + ibu + saudara lelaki s.i.s"
+  source: "Datuk ditapis -> ibu 1/3 (satu adik-beradik), saudara asabah"
+  verified_by: pending
+  input:
+    deceased_gender: male
+    net_estate: 90000
+    heirs:
+      - { type: paternalGrandfather, count: 1, nasab_confirmed: false }
+      - { type: mother, count: 1 }
+      - { type: fullBrother, count: 1 }
+  expected:
+    blocked: [paternalGrandfather]
+    shares:
+      - { type: mother, fraction: "1/3", basis: fardu, amount: 30000 }
+      - { type: fullBrother, fraction: "2/3", basis: asabah, amount: 60000 }
