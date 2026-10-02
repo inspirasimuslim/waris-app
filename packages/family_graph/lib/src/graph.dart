@@ -47,12 +47,55 @@ class FamilyGraph {
     _parentLinks.add(link);
   }
 
+  /// Had maksimum isteri serentak bagi seorang suami (poligami, D-027).
+  static const int maxConcurrentWives = 4;
+
   void addSpouseLink(SpouseLink link) {
     if (!_persons.containsKey(link.personAId) ||
         !_persons.containsKey(link.personBId)) {
       throw StateError('SpouseLink merujuk orang yang tidak wujud.');
     }
+    if (link.status == MarriageStatus.married) {
+      _checkPolygamyLimit(link);
+      _checkSingleHusband(link);
+    }
     _spouseLinks.add(link);
+  }
+
+  /// D-027: seorang lelaki maksimum [maxConcurrentWives] isteri BERSTATUS
+  /// `married` pada satu masa. Rekod `divorced`/`widowed` yang lepas tidak
+  /// dikira dalam had ini.
+  void _checkPolygamyLimit(SpouseLink link) {
+    for (final pid in [link.personAId, link.personBId]) {
+      final p = requirePerson(pid);
+      if (p.gender != Gender.male) continue;
+      final currentWives = _spouseLinks
+          .where((l) => l.status == MarriageStatus.married && l.involves(pid))
+          .length;
+      if (currentWives >= maxConcurrentWives) {
+        throw ArgumentError(
+            '${p.name} sudah mempunyai $maxConcurrentWives isteri berstatus '
+            'married — had maksimum poligami (SPEC: anak boleh kahwin '
+            'sehingga $maxConcurrentWives isteri) telah dicapai.');
+      }
+    }
+  }
+
+  /// D-027: seorang perempuan maksimum SATU suami berstatus `married` pada
+  /// satu masa. Rekod `divorced`/`widowed` yang lepas tidak dikira.
+  void _checkSingleHusband(SpouseLink link) {
+    for (final pid in [link.personAId, link.personBId]) {
+      final p = requirePerson(pid);
+      if (p.gender != Gender.female) continue;
+      final currentHusbands = _spouseLinks
+          .where((l) => l.status == MarriageStatus.married && l.involves(pid))
+          .length;
+      if (currentHusbands >= 1) {
+        throw ArgumentError(
+            '${p.name} sudah mempunyai suami berstatus married — seorang '
+            'perempuan hanya boleh mempunyai satu suami pada satu masa.');
+      }
+    }
   }
 
   /// Adakah menambah [parentId] sebagai ibu bapa [childId] mencipta kitaran?
